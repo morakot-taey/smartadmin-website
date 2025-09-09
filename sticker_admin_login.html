@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Admin Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)), url('https://img2.pic.in.th/pic/Home-6.png') center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: white;
+        }
+        .login-container h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .login-container p {
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1rem;
+        }
+        .login-container input::placeholder { color: rgba(255,255,255,0.7); }
+        .login-container button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .login-container button:hover { background: rgba(255, 255, 255, 0.4); }
+        #login-error {
+            color: #ffcccc;
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h1><i class="fas fa-user-shield"></i> Sticker Admin</h1>
+        <p>สำหรับเจ้าหน้าที่อนุมัติสติ๊กเกอร์</p>
+        <input type="password" id="admin-password" placeholder="กรุณาใส่รหัสผ่าน">
+        <button id="admin-login-button">เข้าสู่ระบบ</button>
+        <p id="login-error">รหัสผ่านไม่ถูกต้อง</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginButton = document.getElementById('admin-login-button');
+            const passwordInput = document.getElementById('admin-password');
+            const loginError = document.getElementById('login-error');
+
+            const stickerAdminPasswords = [
+                "680399", "566145", "680061", "640259", "597185", 
+                "650029", "680225", "600179", "670187", "597354", 
+                "600546", "660134", "597713", "420019"
+            ];
+
+            const handleStickerAdminLogin = () => {
+                const enteredPassword = passwordInput.value;
+                if (stickerAdminPasswords.includes(enteredPassword)) {
+                    localStorage.setItem('stickerAdminId', enteredPassword);
+                    window.location.href = 'admin.html'; // ไปยังหน้าจัดการสติ๊กเกอร์
+                } else {
+                    loginError.style.display = 'block';
+                }
+            };
+
+            loginButton.addEventListener('click', handleStickerAdminLogin);
+            passwordInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    handleStickerAdminLogin();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

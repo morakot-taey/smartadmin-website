@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบขอสติ๊กเกอร์ - Thai Eastern Group</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-surface: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.25);
+            --accent-color: #007BFF;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --input-bg: rgba(0, 0, 0, 0.2);
+            --success-color: #28a745;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://img2.pic.in.th/pic/Home-6.png') center/cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px 10px;
+            color: var(--text-primary);
+        }
+        .background-logo {
+            position: fixed; top: 20px; left: 20px;
+            width: 180px; height: auto; z-index: 1000; opacity: 0.9;
+        }
+        .main-container {
+            background: var(--bg-surface); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 30px; width: 150%; max-width: 1000px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center; margin-top: 50px;
+        }
+        .floating-button {
+            position: fixed; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-secondary); padding: 10px 18px; border-radius: 12px; text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px; transition: all 0.3s ease; backdrop-filter: blur(10px); z-index: 1000;
+        }
+        .floating-button:hover { background: rgba(0, 0, 0, 0.4); color: var(--text-primary); transform: translateY(-2px); }
+        .home-button { top: 25px; right: 25px; }
+        .admin-login-button { bottom: 25px; left: 25px; }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page-header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+        .page-header p { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 30px; }
+        .form-section .page-header h1 { font-size: 1.8rem; }
+        .choice-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; justify-content: center; }
+        .choice-card {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 10px; transition: all 0.3s ease; cursor: pointer; text-align: center;
+        }
+        .choice-card:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.1); }
+        .choice-card .sticker-img {
+            width: 350px;
+            height: 350px;
+            object-fit: contain;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+        }
+        .choice-card:hover .sticker-img { transform: scale(1.03); }
+        .choice-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; }
+        .btn { padding: 12px 30px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background-color: var(--accent-color); color: white; }
+        .btn-primary:hover { filter: brightness(1.15); }
+        .btn-secondary { background-color: rgba(255,255,255,0.15); color: var(--text-primary); }
+        .form-separator { grid-column: 1 / -1; border: 0; height: 1px; background: var(--border-color); margin: 5px 0 25px 0; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px 25px; text-align: left; }
+        .form-group { margin-bottom: 10px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group > label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; color: var(--text-secondary); }
+        .form-control { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-primary); font-size: 1rem; font-family: 'Sarabun', sans-serif; transition: all 0.2s ease; }
+        .form-control:focus { outline: none; border-color: var(--accent-color); }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a8b2d1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        select.form-control option { background-color: #343a40; color: #f8f9fa; }
+        .form-choice-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .form-choice-group input[type="radio"] { display: none; }
+        .form-choice-group label { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; min-height: 100px; }
+        .form-choice-group label i { font-size: 1.8rem; margin-bottom: 10px; color: var(--text-secondary); }
+        .form-choice-group input:checked + label { background-color: rgba(0, 123, 255, 0.15); border-color: var(--accent-color); color: var(--text-primary); }
+        .form-choice-group input:checked + label i { color: var(--accent-color); }
+        .form-checkbox { position: relative; }
+        .form-checkbox input[type="checkbox"] { position: absolute; opacity: 0; cursor: pointer; height: 100%; width: 100%; margin:0; }
+        .form-checkbox label { padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .form-checkbox label::before { content: ''; width: 20px; height: 20px; border: 2px solid var(--border-color); border-radius: 4px; margin-right: 12px; transition: all 0.2s; flex-shrink: 0; }
+        .form-checkbox input:checked + label { background-color: rgba(40, 167, 69, 0.15); border-color: var(--success-color); }
+        .form-checkbox input:checked + label::before { background-color: var(--success-color); border-color: var(--success-color); content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: white; display: inline-flex; align-items: center; justify-content: center; }
+        .file-input-wrapper { background: var(--input-bg); border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 120px; }
+        .file-input-wrapper:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-color); }
+        .file-input-wrapper input[type="file"] { display: none; }
+        .file-input-wrapper i { font-size: 2rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .file-input-name { font-size: 0.9rem; color: var(--text-secondary); word-break: break-all; }
+        .compact-radio-group { display: flex; gap: 20px; align-items: center; }
+        .compact-radio-group label { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; }
+        .compact-radio-group input { margin-right: 5px; accent-color: var(--accent-color); }
+        .button-container { display: flex; justify-content: center; gap: 15px; grid-column: 1 / -1; margin-top: 30px; }
+        .label-desc { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.8; font-weight: 400; margin-left: 8px; }
+        label.required::after { content: ' *'; color: #ff8a80; }
+        @media (max-width: 768px) { .background-logo { width: 150px; top: 15px; left: 15px; } .main-container { padding: 30px 20px; margin-top: 60px; } .choice-card .sticker-img { width: 180px; height: 180px; } }
+    </style>
+</head>
+<body>
+    <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Thai Eastern Group Logo" class="background-logo">
+    <a href="sticker_admin_login.html" class="floating-button admin-login-button"><i class="fas fa-user-shield"></i> <span data-lang-key="adminLoginBtn">สำหรับเจ้าหน้าที่</span></a>
+    <a href="index.html" class="floating-button home-button"><i class="fas fa-home"></i> <span data-lang-key="homeBtn">กลับหน้าแรก</span></a>
+    <div class="main-container">
+        <!-- Initial Choice -->
+        <div id="initial-choice" class="form-section active">
+            <div class="page-header"><h1 data-lang-key="mainTitle">ระบบขอสติ๊กเกอร์ยานพาหนะ</h1><p data-lang-key="selectRequestType">กรุณาเลือกประเภทสติ๊กเกอร์ที่ต้องการ</p></div>
+            <div class="choice-container">
+                <div class="choice-card" onclick="showForm('request-op-area')"><img src="https://img2.pic.in.th/pic/019e3284f0e9644a22.png" class="sticker-img"><h3 data-lang-key="opAreaCardTitle">สติ๊กเกอร์เขตประกอบการ</h3><div class="btn btn-primary"><i class="fas fa-arrow-right"></i> <span data-lang-key="selectBtn">เลือก</span></div></div>
+                <div class="choice-card" onclick="showForm('request-checkpoint3')"><img src="https://img5.pic.in.th/file/secure-sv1/0257b97aaf3332e847.png" class="sticker-img"><h3 data-lang-key="checkpoint3CardTitle">สติ๊กเกอร์ป้อม 3 (TEI/TER/EPO)</h3><div class="btn btn-primary"><i class="fas fa-arrow-right"></i> <span data-lang-key="selectBtn">เลือก</span></div></div>
+            </div>
+        </div>
+        
+        <!-- Form 1: Op Area -->
+        <div id="request-op-area" class="form-section">
+            <div class="page-header"><h1 data-lang-key="opAreaFormTitle">แบบฟอร์มขอสติ๊กเกอร์ (เขตประกอบการ)</h1></div>
+            <form id="op-area-form">
+                <div class="form-grid">
+                    <hr class="form-separator">
+                    <div class="form-group"><label class="required" data-lang-key="empCodeLabel">รหัสพนักงาน</label><input type="text" name="emp_code" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="nameLabel">ชื่อ-สกุล</label><input type="text" name="emp_name" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="companyLabel">บริษัท</label><input type="text" name="company" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="departmentLabel">แผนก</label><input type="text" name="department" class="form-control" required></div>
+                    <div class="form-group full-width"><label class="required" data-lang-key="positionLabel">ตำแหน่ง</label><select name="position" class="form-control" required><option value="" data-lang-key="selectPosition">--- กรุณาเลือกตำแหน่ง ---</option><option value="เจ้าหน้าที่">เจ้าหน้าที่</option><option value="ผู้จัดการ">ผู้จัดการ</option><option value="หัวหน้าแผนก">หัวหน้าแผนก</option><option value="พนักงานปฏิบัติการ">พนักงานปฏิบัติการ</option><option value="พนักงานปฏิบัติงาน">พนักงานปฏิบัติงาน</option><option value="หัวหน้าหน่วย/หัวหน้ากะ">หัวหน้าหน่วย/หัวหน้ากะ</option><option value="ผู้ช่วยผู้จัดการ">ผู้ช่วยผู้จัดการ</option><option value="ช่างวิศวกรรม">ช่างวิศวกรรม</option><option value="ช่างซ่อมบำรุง">ช่างซ่อมบำรุง</option><option value="ผู้ช่วยหัวหน้ากะ">ผู้ช่วยหัวหน้ากะ</option><option value="นักศึกษาฝึกงาน">นักศึกษาฝึกงาน</option></select></div>
+                    <div class="form-group full-width">
+                        <label class="required" data-lang-key="vehicleRegLabel">ทะเบียนรถ
+                            <span class="label-desc" data-lang-key="vehicleRegDesc">(กรอกให้ครบ: เลขหน้า, อักษร, เลข, จังหวัด)</span>
+                        </label>
+                        <input type="text" name="op_area_vehicle_reg" class="form-control" required placeholder="เช่น 1กข 1234 กรุงเทพมหานคร">
+                    </div>
+                    <hr class="form-separator">
+                    <div class="form-group full-width"><label class="required" data-lang-key="vehicleTypeLabel">ประเภทคำขอ</label><div class="form-choice-group"><input type="radio" id="vt_moto_thai" name="vehicle_type" value="moto_thai" required><label for="vt_moto_thai"><i class="fas fa-motorcycle"></i><span data-lang-key="motoThai">จยย. (ไทย)</span></label><input type="radio" id="vt_moto_foreign" name="vehicle_type" value="moto_foreign" required><label for="vt_moto_foreign"><i class="fas fa-motorcycle"></i><span data-lang-key="motoForeign">จยย. (ต่างด้าว)</span></label><input type="radio" id="vt_car_general" name="vehicle_type" value="car_general" required><label for="vt_car_general"><i class="fas fa-car-side"></i><span data-lang-key="carGeneral">รถยนต์</span></label><input type="radio" id="vt_car_mgmt" name="vehicle_type" value="car_mgmt" required><label for="vt_car_mgmt"><i class="fas fa-user-tie"></i><span data-lang-key="carMgmt">รถยนต์ (จัดการ)</span></label></div></div>
+                    <div class="form-group"><label class="required" data-lang-key="vehiclePhotoLabel">รูปถ่ายรถ<span class="label-desc" data-lang-key="vehiclePhotoDesc">(รูปถ่ายหน้ารถให้เห็นทะเบียน)</span></label><label class="file-input-wrapper"><input type="file" name="vehicle_photo" required onchange="updateFileName(this)"><i class="fas fa-cloud-upload-alt"></i><span class="file-input-name" data-lang-key="filePlaceholder">แนบไฟล์ที่นี่</span></label></div>
+                    <div class="form-group"><label data-lang-key="insPhotoLabel">รูป พ.ร.บ.</label><label class="file-input-wrapper"><input type="file" name="ins_photo" onchange="updateFileName(this)"><i class="fas fa-cloud-upload-alt"></i><span class="file-input-name" data-lang-key="filePlaceholder">แนบไฟล์ที่นี่</span></label></div>
+                    <div class="form-group"><label data-lang-key="taxPhotoLabel">รูปป้ายภาษี</label><label class="file-input-wrapper"><input type="file" name="tax_photo" onchange="updateFileName(this)"><i class="fas fa-cloud-upload-alt"></i><span class="file-input-name" data-lang-key="filePlaceholder">แนบไฟล์ที่นี่</span></label></div>
+                    <div class="form-group full-width"><div class="form-checkbox"><input type="checkbox" id="has_driver_license" name="has_driver_license" value="yes"><label for="has_driver_license" data-lang-key="licenseCheckboxLabel">มีใบขับขี่ตามประเภทรถ</label></div></div>
+                </div>
+                <div class="button-container"><div class="btn btn-secondary" onclick="resetAndShow('initial-choice')"><i class="fas fa-arrow-left"></i> <span data-lang-key="backButton">ย้อนกลับ</span></div><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> <span data-lang-key="submitButton">ส่งคำขอ</span></button></div>
+            </form>
+        </div>
+        <!-- Form 2: Checkpoint 3 -->
+        <div id="request-checkpoint3" class="form-section">
+            <div class="page-header"><h1 data-lang-key="checkpoint3FormTitle">แบบฟอร์มขอสติ๊กเกอร์ (ป้อม 3)</h1></div>
+            <form id="checkpoint3-form">
+                <div class="form-grid">
+                    <hr class="form-separator">
+                    <div class="form-group"><label class="required" data-lang-key="empCodeLabel">รหัสพนักงาน</label><input type="text" name="cp3_emp_code" class="form-control" required placeholder="660275"></div>
+                    <div class="form-group"><label class="required" data-lang-key="nameLabel">ชื่อ-สกุล</label><input type="text" name="cp3_emp_name" class="form-control" required placeholder="สมชาย ใจดี"></div>
+                    <div class="form-group"><label class="required" data-lang-key="positionLabel">ตำแหน่ง</label><input type="text" name="cp3_position" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="departmentLabel">แผนก</label><input type="text" name="cp3_department" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="affiliationLabel">สังกัด</label><input type="text" name="cp3_affiliation" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="companyLabel">บริษัท</label><input type="text" name="cp3_company" class="form-control" required></div>
+                    <div class="form-group full-width"><label class="required" data-lang-key="vehicleOwnership">ประเภทรถ</label><div class="compact-radio-group"><label><input type="radio" name="cp3_car_ownership" value="personal" checked><span data-lang-key="carPersonal">รถส่วนตัว</span></label><label><input type="radio" name="cp3_car_ownership" value="company"><span data-lang-key="carCompany">รถบริษัท</span></label></div></div>
+                    <div class="form-group full-width"><label class="required" data-lang-key="vehicleRegLabel">ทะเบียนรถ</label><input type="text" name="cp3_vehicle_reg" class="form-control" required placeholder="1กข 1234 กรุงเทพมหานคร"></div>
+                    <div class="form-group"><label class="required" data-lang-key="contactUnitLabel">หน่วยงานที่ติดต่อ</label><input type="text" name="cp3_contact_unit" class="form-control" required></div>
+                    <div class="form-group"><label class="required" data-lang-key="frequencyLabel">ระบุความถี่</label><input type="text" name="cp3_frequency" class="form-control" required placeholder="เช่น ทุกวัน, จ-ศ"></div>
+                    <div class="form-group full-width"><label class="required" data-lang-key="purposeLabel">วัตถุประสงค์</label><textarea name="cp3_purpose" class="form-control" required></textarea></div>
+                </div>
+                <div class="button-container"><div class="btn btn-secondary" onclick="resetAndShow('initial-choice')"><i class="fas fa-arrow-left"></i> <span data-lang-key="backButton">ย้อนกลับ</span></div><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> <span data-lang-key="submitButton">ส่งคำขอ</span></button></div>
+            </form>
+        </div>
+    </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+    const translations = {
+        th: {
+            adminLoginBtn: "สำหรับเจ้าหน้าที่", homeBtn: "กลับหน้าแรก", mainTitle: "ระบบขอสติ๊กเกอร์ยานพาหนะ", selectRequestType: "กรุณาเลือกประเภทสติ๊กเกอร์ที่ต้องการ",
+            opAreaCardTitle: "สติ๊กเกอร์เขตประกอบการ", checkpoint3CardTitle: "สติ๊กเกอร์ป้อม 3 (TEI/TER/EPO)", selectBtn: "เลือก", filePlaceholder: "แนบไฟล์ที่นี่",
+            opAreaFormTitle: "แบบฟอร์มขอสติ๊กเกอร์ (เขตประกอบการ)", vehicleTypeLabel: "ประเภทคำขอ", motoThai: "จยย. (ไทย)", motoForeign: "จยย. (ต่างด้าว)", carGeneral: "รถยนต์", carMgmt: "รถยนต์ (จัดการ)",
+            vehiclePhotoLabel: "รูปถ่ายรถ", vehiclePhotoDesc: "(รูปถ่ายหน้ารถให้เห็นทะเบียน)", insPhotoLabel: "รูป พ.ร.บ.", taxPhotoLabel: "รูปป้ายภาษี", selectPosition: "--- กรุณาเลือกตำแหน่ง ---",
+            licenseCheckboxLabel: "มีใบขับขี่ตามประเภทรถ", backButton: "ย้อนกลับ", submitButton: "ส่งคำขอ",
+            checkpoint3FormTitle: "แบบฟอร์มขอสติ๊กเกอร์ (ป้อม 3)", empCodeLabel: "รหัสพนักงาน", nameLabel: "ชื่อ-สกุล", positionLabel: "ตำแหน่ง", departmentLabel: "แผนก", affiliationLabel: "สังกัด", companyLabel: "บริษัท",
+            vehicleOwnership: "ประเภทรถ", carPersonal: "รถส่วนตัว", carCompany: "รถบริษัท", vehicleRegLabel: "ทะเบียนรถ", vehicleRegDesc: "(กรอกให้ครบ: เลขหน้า, อักษร, เลข, จังหวัด)", purposeLabel: "วัตถุประสงค์", contactUnitLabel: "หน่วยงานที่ติดต่อ", frequencyLabel: "ระบุความถี่"
+        },
+        en: {
+            adminLoginBtn: "For Staff", homeBtn: "Home", mainTitle: "Vehicle Sticker Request", selectRequestType: "Please select the desired sticker type",
+            opAreaCardTitle: "Industrial Estate Sticker", checkpoint3CardTitle: "Checkpoint 3 Sticker (TEI/TER/EPO)", selectBtn: "Select", filePlaceholder: "Attach file here",
+            opAreaFormTitle: "Request Form (Industrial Estate)", vehicleTypeLabel: "Request Type", motoThai: "Motorcycle (Thai)", motoForeign: "Motorcycle (Foreigner)", carGeneral: "Car", carMgmt: "Car (Management)",
+            vehiclePhotoLabel: "Vehicle Photo", vehiclePhotoDesc: "(Front view with license plate)", insPhotoLabel: "Insurance Photo", taxPhotoLabel: "Tax Sticker Photo", selectPosition: "--- Please Select Position ---",
+            licenseCheckboxLabel: "Has a valid driver's license for the vehicle", backButton: "Back", submitButton: "Submit",
+            checkpoint3FormTitle: "Request Form (Checkpoint 3)", empCodeLabel: "Employee ID", nameLabel: "Full Name", positionLabel: "Position", departmentLabel: "Department", affiliationLabel: "Affiliation", companyLabel: "Company",
+            vehicleOwnership: "Vehicle Type", carPersonal: "Personal Car", carCompany: "Company Car", vehicleRegLabel: "License Plate", vehicleRegDesc: "(Fill completely: prefix, letters, numbers, province)", purposeLabel: "Purpose", contactUnitLabel: "Contact Unit", frequencyLabel: "Specify Frequency"
+        },
+        my: {
+            adminLoginBtn: "ဝန်ထမ်းအတွက်", homeBtn: "ပင်မစာမျက်နှာသို့", mainTitle: "ယာဉ်စတစ်ကာ တောင်းခံစနစ်", selectRequestType: "လိုချင်သော စတစ်ကာအမျိုးအစားကို ရွေးပါ",
+            opAreaCardTitle: "စက်မှုဇုန် စတစ်ကာ", checkpoint3CardTitle: "ဂိတ် ၃ စတစ်ကာ (TEI/TER/EPO)", selectBtn: "ရွေးရန်", filePlaceholder: "ဖိုင်ပူးတွဲပါ",
+            opAreaFormTitle: "တောင်းခံလွှာ (စက်မှုဇုန်)", vehicleTypeLabel: "တောင်းဆိုမှုအမျိုးအစား", motoThai: "ဆိုင်ကယ် (ထိုင်း)", motoForeign: "ဆိုင်ကယ် (နိုင်ငံခြား)", carGeneral: "ကား", carMgmt: "ကား (စီမံ)",
+            vehiclePhotoLabel: "ယာဉ်ဓာတ်ပုံ", vehiclePhotoDesc: "(လိုင်စင်ပြားမြင်ရသော ရှေ့မြင်ကွင်း)", insPhotoLabel: "အာမခံပုံ", taxPhotoLabel: "အခွန်စတစ်ကာပုံ", selectPosition: "--- ရာထူးရွေးပါ ---",
+            licenseCheckboxLabel: "သက်ဆိုင်ရာယာဉ်မောင်းလိုင်စင်ရှိသည်", backButton: "နောက်သို့", submitButton: "တောင်းဆိုချက်ပို့ရန်",
+            checkpoint3FormTitle: "တောင်းခံလွှာ (ဂိတ် ၃)", empCodeLabel: "ဝန်ထမ်းကုဒ်", nameLabel: "အမည်", positionLabel: "ရာထူး", departmentLabel: "ဌာန", affiliationLabel: "สังกัด", companyLabel: "ကုမ္ပဏီ",
+            vehicleOwnership: "ယာဉ်အမျိုးအစား", carPersonal: "ကိုယ်ပိုင်ကား", carCompany: "ကုမ္ပဏီကား", vehicleRegLabel: "လိုင်စင်နံပါတ်", vehicleRegDesc: "(အပြည့်အစုံထည့်ပါ)", purposeLabel: "ရည်ရွယ်ချက်", contactUnitLabel: "ဆက်သွယ်ရန်ဌာန", frequencyLabel: "အကြိမ်ရေ သတ်မှတ်ပါ"
+        },
+        km: {
+            adminLoginBtn: "សម្រាប់បុគ្គលិក", homeBtn: "ទំព័រដើម", mainTitle: "ប្រព័ន្ធស្នើសុំស្ទីគ័រយានយន្ត", selectRequestType: "សូមជ្រើសរើសប្រភេទស្ទីគ័រ",
+            opAreaCardTitle: "ស្ទីគ័រតំបន់ឧស្សាហកម្ម", checkpoint3CardTitle: "ស្ទីគ័រនៅបញ្ជរទី ៣", selectBtn: "ជ្រើសរើស", filePlaceholder: "ភ្ជាប់ឯកសារ",
+            opAreaFormTitle: "ទម្រង់ស្នើសុំ (តំបន់ឧស្សាហកម្ម)", vehicleTypeLabel: "ប្រភេទសំណើ", motoThai: "ម៉ូតូ (ថៃ)", motoForeign: "ម៉ូតូ (បរទេស)", carGeneral: "រថយន្ត", carMgmt: "រថយន្ត (គ្រប់គ្រង)",
+            vehiclePhotoLabel: "រូបថតយានយន្ត", vehiclePhotoDesc: "(ទិដ្ឋភាពខាងមុខเห็นทะเบียน)", insPhotoLabel: "រូបថតประกัน", taxPhotoLabel: "រូបថតពន្ធ", selectPosition: "--- សូមជ្រើសរើសតំណែង ---",
+            licenseCheckboxLabel: "មានប័ណ្ណបើកបរសម្រាប់យានយន្ត", backButton: "ត្រឡប់ក្រោយ", submitButton: "ដាក់ស្នើ",
+            checkpoint3FormTitle: "ទម្រង់ស្នើសុំ (បញ្ជរទី ៣)", empCodeLabel: "លេខសម្គាល់បុគ្គលិក", nameLabel: "ឈ្មោះពេញ", positionLabel: "តំណែង", departmentLabel: "ផ្នែក", affiliationLabel: "สังกัด", companyLabel: "ក្រុមហ៊ុន",
+            vehicleOwnership: "ប្រភេទយានយន្ត", carPersonal: "រថយន្តផ្ទាល់ខ្លួន", carCompany: "រថយន្តក្រុមហ៊ុន", vehicleRegLabel: "ផ្លាកលេខ", vehicleRegDesc: "(បំពេញឲ្យបានពេញលេញ)", purposeLabel: "គោលបំណង", contactUnitLabel: "หน่วยງານទំនាក់ទំនង", frequencyLabel: "បញ្ជាក់ ความถี่"
+        }
+    };
+    function setLanguage(lang) {
+        const data = translations[lang] || translations.th;
+        document.documentElement.lang = lang;
+        localStorage.setItem('preferredLanguage', lang);
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.getAttribute('data-lang-key');
+            if (data[key]) el.textContent = data[key];
+        });
+    }
+    function showForm(formId) {
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        if(formId) document.getElementById(formId).classList.add('active');
+        else document.getElementById('initial-choice').classList.add('active');
+    }
+    function resetAndShow(formId) {
+        const activeForm = document.querySelector('.form-section.active form');
+        if (activeForm) activeForm.reset();
+        document.querySelectorAll('.file-input-name').forEach(span => {
+            const lang = localStorage.getItem('preferredLanguage') || 'th';
+            span.textContent = translations[lang].filePlaceholder;
+        });
+        showForm(formId);
+    }
+    function updateFileName(input) {
+        const wrapper = input.closest('.file-input-wrapper');
+        const fileNameSpan = wrapper.querySelector('.file-input-name');
+        const lang = localStorage.getItem('preferredLanguage') || 'th';
+        const maxFileSize = 2 * 1024 * 1024; // 2MB
+        if (input.files.length > 0) {
+            if (input.files[0].size > maxFileSize) {
+                alert(`ไฟล์ "${input.files[0].name}" มีขนาดใหญ่เกิน 2MB กรุณาเลือกไฟล์ใหม่`);
+                input.value = '';
+                fileNameSpan.textContent = translations[lang].filePlaceholder;
+                return;
+            }
+            fileNameSpan.textContent = input.files[0].name;
+        } else {
+            fileNameSpan.textContent = translations[lang].filePlaceholder;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLang = localStorage.getItem('preferredLanguage') || 'th';
+        setLanguage(savedLang);
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
+            authDomain: "smartadmin-hr-project.firebaseapp.com",
+            databaseURL: "https://smartadmin-hr-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smartadmin-hr-project",
+            storageBucket: "smartadmin-hr-project.appspot.com",
+            messagingSenderId: "797763301010",
+            appId: "1:797763301010:web:2c4b5e24ac0750e67cc04b"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwXF0wZPf0mmPYxVcS_MC8Wscj8v9zYrI7CUipkCNDuJG8zrRRaRoeKmYu1uPvyimki/exec';
+        async function handleFormSubmit(form, event, dbPath) {
+            event.preventDefault();
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            const maxFileSize = 2 * 1024 * 1024; // 2MB
+            for (const input of fileInputs) {
+                if (input.files.length > 0 && input.files[0].size > maxFileSize) {
+                    alert(`ไฟล์ "${input.files[0].name}" มีขนาดใหญ่เกิน 2MB ไม่สามารถส่งข้อมูลได้`);
+                    return;
+                }
+            }
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'กำลังส่งข้อมูล...';
+            const formData = new FormData(form);
+            const textData = {};
+            for (const [key, value] of formData.entries()) {
+                if (typeof value === 'string') {
+                    textData[key] = value;
+                }
+            }
+            textData.timestamp = new Date().toISOString();
+            textData.status = 'pending';
+            try {
+                const newRequestRef = await db.ref(dbPath).push(textData);
+                submitButton.textContent = 'กำลังอัปโหลดไฟล์ (0%)...';
+                const filesToUpload = Array.from(form.querySelectorAll('input[type="file"]')).filter(input => input.files.length > 0);
+                const updates = {};
+                for (let i = 0; i < filesToUpload.length; i++) {
+                    const input = filesToUpload[i];
+                    const file = input.files[0];
+                    const progress = Math.round(((i + 1) / filesToUpload.length) * 100);
+                    submitButton.textContent = `กำลังอัปโหลดไฟล์ (${progress}%)...`;
+                    const reader = new FileReader();
+                    const fileData = await new Promise((resolve, reject) => {
+                        reader.onload = e => resolve({
+                            requestId: newRequestRef.key,
+                            mimeType: file.type,
+                            fileName: file.name,
+                            data: e.target.result.split(',')[1]
+                        });
+                        reader.onerror = reject;
+                    });
+                    reader.readAsDataURL(file);
+                    const response = await fetch(scriptURL, {
+                        method: 'POST',
+                        body: JSON.stringify(fileData)
+                    });
+                    const result = await response.json();
+                    if (result.result === 'success') {
+                        updates[input.name + '_url'] = result.url;
+                    } else {
+                        console.warn(`อัปโหลดไฟล์ ${file.name} ไม่สำเร็จ:`, result.error);
+                    }
+                }
+                if (Object.keys(updates).length > 0) {
+                    await newRequestRef.update(updates);
+                }
+                alert('ส่งคำขอสำเร็จ!');
+                resetAndShow('initial-choice');
+            } catch (error) {
+                console.error('Error!', error.message);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            } finally {
+                submitButton.disabled = false;
+                const lang = localStorage.getItem('preferredLanguage') || 'th';
+                const submitButtonText = translations[lang].submitButton || 'ส่งคำขอ';
+                submitButton.innerHTML = `<i class="fas fa-paper-plane"></i> <span>${submitButtonText}</span>`;
+            }
+        }
+        const opAreaForm = document.getElementById('op-area-form');
+        opAreaForm.addEventListener('submit', (e) => handleFormSubmit(opAreaForm, e, 'sticker_requests/op_area'));
+        const checkpoint3Form = document.getElementById('checkpoint3-form');
+        checkpoint3Form.addEventListener('submit', (e) => handleFormSubmit(checkpoint3Form, e, 'sticker_requests/checkpoint3'));
+    });
+</script>
+</body>
+</html>
